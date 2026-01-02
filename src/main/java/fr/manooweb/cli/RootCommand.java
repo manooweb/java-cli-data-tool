@@ -6,8 +6,8 @@ import picocli.CommandLine.Command;
         name = "java-cli-data-tool",
         mixinStandardHelpOptions = true, // --help, --version
         version = "0.2.0",
-        description = "A small CLI tool to transform data files."
-)
+        description = "A small CLI tool to transform data files.",
+        subcommands = { TransformCommand.class })
 public class RootCommand implements Runnable {
 
     @Override
