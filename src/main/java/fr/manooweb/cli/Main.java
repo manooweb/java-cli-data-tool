@@ -1,8 +1,10 @@
 package fr.manooweb.cli;
 
-public final class Main {
+import picocli.CommandLine;
 
+public final class Main {
     public static void main(String[] args) {
-        System.out.println("Application started");
+        int exitCode = new CommandLine(new RootCommand()).execute(args);
+        System.exit(exitCode);
     }
 }
