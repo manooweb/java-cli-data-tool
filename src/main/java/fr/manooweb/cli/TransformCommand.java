@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.manooweb.core.JsonFlattener;
+import fr.manooweb.core.JsonPicker;
 import fr.manooweb.error.ExitCodes;
 import fr.manooweb.error.InputException;
 import fr.manooweb.error.ParseException;
@@ -30,6 +31,9 @@ public class TransformCommand implements Callable<Integer> {
     @Option(names = "--op", required = true, converter = OperationNameConverter.class, description = "Operation to apply. Valid values: ${COMPLETION-CANDIDATES}.")
     private OperationName operation;
 
+    @Option(names = "--fields", description = "Comma-separated list of top-level fields to keep (required for pick).")
+    private String fieldsCsv;
+
     @Override
     public Integer call() {
         if (!Files.exists(input)) {
@@ -38,7 +42,7 @@ public class TransformCommand implements Callable<Integer> {
 
         JsonNode inputJson;
         try {
-            inputJson = fr.manooweb.io.JsonIO.read(input);
+            inputJson = JsonIO.read(input);
         } catch (JsonProcessingException e) {
             throw new ParseException("Invalid JSON: " + e.getOriginalMessage(), e);
         } catch (IOException e) {
@@ -47,9 +51,16 @@ public class TransformCommand implements Callable<Integer> {
 
         JsonNode outputJson;
         try {
+            if (operation == OperationName.PICK && (fieldsCsv == null || fieldsCsv.isBlank())) {
+                throw new ProcessingException("--fields is required when --op=pick");
+            }
+
             switch (operation) {
                 case FLATTEN -> outputJson = JsonFlattener.flatten(inputJson);
-                case PICK -> throw new ProcessingException("pick is not implemented yet");
+                case PICK -> {
+                    var fields = JsonPicker.parseFieldsCsv(fieldsCsv);
+                    outputJson = JsonPicker.pickTopLevelFields(inputJson, fields);
+                }
                 default -> throw new ProcessingException("Unexpected operation: " + operation);
             }
         } catch (RuntimeException e) {

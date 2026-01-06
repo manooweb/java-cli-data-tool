@@ -49,7 +49,7 @@ class TransformCommandTest {
     }
 
     @Test
-    void pickNotImplementedShouldReturn5() throws Exception {
+    void pickWithoutFieldsShouldReturn5() throws Exception {
         Path inputFile = Files.createTempFile("valid-", ".json");
         Files.writeString(inputFile, """
                 { "a": 1 }
