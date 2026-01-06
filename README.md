@@ -1,5 +1,7 @@
 # java-cli-data-tool
 
+[![CI](https://github.com/manooweb/java-cli-data-tool/actions/workflows/ci.yaml/badge.svg)](https://github.com/manooweb/java-cli-data-tool/actions/workflows/ci.yaml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/manooweb/java-cli-data-tool/blob/main/LICENSE)
+
 A small Java 21 CLI to transform JSON files.
 
 Built as a compact “vitrine” project: executable fat jar (`java -jar`), real file I/O, clean structure, unit tests, and explicit exit codes.
