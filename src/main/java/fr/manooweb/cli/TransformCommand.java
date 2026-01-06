@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.manooweb.core.JsonFlattener;
+import fr.manooweb.io.JsonIO;
 
 @Command(name = "transform", mixinStandardHelpOptions = true, description = "Transform a JSON input file and write the result to a file or stdout.")
 public class TransformCommand implements Runnable {
@@ -37,16 +38,16 @@ public class TransformCommand implements Runnable {
 
             JsonNode outputJson;
             switch (operation) {
-                case FLATTEN -> outputJson = JsonFlattener.flatten(mapper, inputJson);
+                case FLATTEN -> outputJson = JsonFlattener.flatten(inputJson);
                 case PICK -> throw new UnsupportedOperationException("pick is not implemented yet");
                 default -> throw new IllegalStateException("Unexpected operation: " + operation);
             }
 
             if (output == null) {
-                mapper.writerWithDefaultPrettyPrinter().writeValue(System.out, outputJson);
+                JsonIO.writePretty(outputJson, System.out);
                 System.out.println();
             } else {
-                mapper.writerWithDefaultPrettyPrinter().writeValue(output.toFile(), outputJson);
+                JsonIO.writePretty(outputJson, output);
             }
         } catch (JsonProcessingException e) {
             System.err.println("Invalid JSON: " + e.getOriginalMessage());

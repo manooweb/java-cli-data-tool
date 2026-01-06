@@ -1,10 +1,9 @@
 package fr.manooweb.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public final class JsonFlattener {
@@ -20,8 +19,8 @@ public final class JsonFlattener {
      * Example:
      * {"a":{"b":1}} => {"a.b":1}
      */
-    public static ObjectNode flatten(ObjectMapper mapper, JsonNode input) {
-        ObjectNode output = mapper.createObjectNode();
+    public static ObjectNode flatten(JsonNode input) {
+        ObjectNode output = JsonNodeFactory.instance.objectNode();
         flattenInto(output, "", input);
         return output;
     }
@@ -36,16 +35,13 @@ public final class JsonFlattener {
         }
 
         if (node.isObject()) {
-            Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> entry = fields.next();
+            for (Map.Entry<String, JsonNode> entry : node.properties()) {
                 String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
                 JsonNode value = entry.getValue();
 
                 if (value != null && value.isObject()) {
                     flattenInto(output, key, value);
                 } else {
-                    // Arrays and primitives are stored as-is
                     output.set(key, value);
                 }
             }

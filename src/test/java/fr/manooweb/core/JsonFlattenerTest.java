@@ -34,7 +34,7 @@ class JsonFlattenerTest {
         """;
 
     JsonNode input = mapper.readTree(json);
-    ObjectNode output = JsonFlattener.flatten(mapper, input);
+    ObjectNode output = JsonFlattener.flatten(input);
 
     assertEquals("Manu", output.get("user.name").asText());
     assertEquals("Nantes", output.get("user.address.city").asText());
@@ -53,7 +53,7 @@ class JsonFlattenerTest {
         """;
 
     JsonNode input = mapper.readTree(json);
-    ObjectNode output = JsonFlattener.flatten(mapper, input);
+    ObjectNode output = JsonFlattener.flatten(input);
 
     assertEquals(2, output.get("tags").size());
     assertEquals("a", output.get("tags").get(0).asText());
@@ -67,7 +67,7 @@ class JsonFlattenerTest {
         """;
 
     JsonNode input = mapper.readTree(json);
-    ObjectNode output = JsonFlattener.flatten(mapper, input);
+    ObjectNode output = JsonFlattener.flatten(input);
 
     assertEquals(3, output.get("value").size());
     assertEquals(2, output.get("value").get(1).asInt());
